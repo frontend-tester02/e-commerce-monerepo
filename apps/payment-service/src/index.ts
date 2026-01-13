@@ -1,10 +1,16 @@
 import { serve } from '@hono/node-server'
+import { timeStamp } from 'console'
 import { Hono } from 'hono'
+import { uptime } from 'process'
 
 const app = new Hono()
 
 app.get('/', c => {
-	return c.text('Hello Hono!')
+	return c.json({
+		status: 'ok',
+		uptime: process.uptime(),
+		timeStamp: Date.now(),
+	})
 })
 
 const start = async () => {
