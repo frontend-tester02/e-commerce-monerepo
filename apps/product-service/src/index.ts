@@ -1,5 +1,7 @@
 import express, { Request, Response } from 'express'
 import cors from 'cors'
+import { clerkMiddleware, getAuth } from '@clerk/express'
+import { authMiddleware } from './middleware/auth-middlesware.js'
 
 const app = express()
 app.use(
@@ -9,12 +11,18 @@ app.use(
 	})
 )
 
+app.use(clerkMiddleware())
+
 app.get('/products', (req: Request, res: Response) => {
 	return res.status(200).json({
 		status: 'ok',
 		uptime: process.uptime(),
 		timeStamp: Date.now(),
 	})
+})
+
+app.get('/test', authMiddleware, (req, res) => {
+	res.json({ message: 'Product service auth', userId: req.userId })
 })
 
 app.listen(8000, () => {

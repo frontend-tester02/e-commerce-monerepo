@@ -1,12 +1,23 @@
 import Fastify from 'fastify'
+import { clerkPlugin, clerkClient, getAuth } from '@clerk/fastify'
+import { authMiddleware } from './middleware/auth-middleware'
 
-const fastify = Fastify()
+const fastify = Fastify({ logger: true })
 
-fastify.get('/order', (request, reply) => {
+fastify.register(clerkPlugin)
+
+fastify.get('/order', async (request, reply) => {
 	return reply.status(200).send({
 		status: 'ok',
 		uptime: process.uptime(),
 		timeStamp: Date.now(),
+	})
+})
+
+fastify.get('/test', { preHandler: authMiddleware }, (request, reply) => {
+	return reply.send({
+		message: 'Order service is auth',
+		userId: request.userId,
 	})
 })
 
@@ -19,4 +30,5 @@ const start = async () => {
 		process.exit(1)
 	}
 }
+
 start()
