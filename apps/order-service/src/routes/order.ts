@@ -1,6 +1,6 @@
 import { FastifyInstance } from 'fastify'
 import { request } from 'http'
-import { authMiddleware } from '../middleware/auth-middleware'
+import { adminMiddleware, authMiddleware } from '../middleware/auth-middleware'
 import { Order } from '@repo/order-db'
 
 export const orderRoute = async (fastify: FastifyInstance) => {
@@ -13,8 +13,12 @@ export const orderRoute = async (fastify: FastifyInstance) => {
 		},
 	)
 
-	fastify.get('/orders', async (request, reply) => {
-		const orders = await Order.find()
-		return reply.send(orders)
-	})
+	fastify.get(
+		'/orders',
+		{ preHandler: adminMiddleware },
+		async (request, reply) => {
+			const orders = await Order.find()
+			return reply.send(orders)
+		},
+	)
 }
