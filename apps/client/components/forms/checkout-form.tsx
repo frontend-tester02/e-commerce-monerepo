@@ -52,15 +52,27 @@ const CheckoutForm = ({
 		setLoading(false)
 	}
 	return (
-		<form onSubmit={handleSubmit}>
+		<form className='flex flex-col gap-6' onSubmit={handleSubmit}>
 			<PaymentElement options={{ layout: 'accordion' }} />
-			<button disabled={loading || checkout.type !== 'success'} type='submit'>
+
+			<button
+				className='w-full rounded-lg bg-gray-800 p-3 text-sm font-medium text-white transition-colors hover:bg-gray-900 disabled:cursor-not-allowed disabled:bg-gray-300'
+				disabled={loading || checkout.type !== 'success'}
+				type='submit'
+			>
 				{loading ? 'Loading...' : 'Pay'}
 			</button>
+
 			{checkout.type === 'error' && (
-				<div className=''>{checkout.error.message}</div>
+				<div className='rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-700'>
+					{checkout.error.message}
+				</div>
 			)}
-			{error && <div className=''>{error.message}</div>}
+			{error && (
+				<div className='rounded-lg border border-red-100 bg-red-50 p-3 text-sm text-red-700'>
+					{error.message}
+				</div>
+			)}
 		</form>
 	)
 }

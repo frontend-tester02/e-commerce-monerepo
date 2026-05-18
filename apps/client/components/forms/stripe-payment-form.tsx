@@ -4,7 +4,8 @@
 import { useAuth } from '@clerk/nextjs'
 import { CheckoutElementsProvider } from '@stripe/react-stripe-js/checkout'
 import { loadStripe } from '@stripe/stripe-js'
-import { useEffect, useMemo, useState } from 'react'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
 import useCart from '../../hooks/use-cart'
 import { ShippingFormInputs } from '../../lib/validation'
 import { CartItemsType } from '../../types'
@@ -71,26 +72,95 @@ const StripePaymentForm = ({
 }: {
 	shippingForm: ShippingFormInputs
 }) => {
-	const [token, setToken] = useState<string | null>(null)
-	const { getToken } = useAuth()
-	const { cart } = useCart()
-
-	const clientSecret = useMemo(() => {
-		if (!token) return null
-		return fetchClientSecret(token, cart)
-	}, [token, cart])
+	const [clientSecret, setClientSecret] = useState<string | null>(null)
+	const [error, setError] = useState<string | null>(null)
+	const [loading, setLoading] = useState(true)
+	const { getToken, isLoaded, isSignedIn } = useAuth()
+	const { cart, hasHydrated } = useCart()
 
 	useEffect(() => {
-		getToken().then(token => setToken(token))
-	}, [])
+		if (!isLoaded || !hasHydrated) return
+
+		const createCheckoutSession = async () => {
+			setLoading(true)
+			setError(null)
+			setClientSecret(null)
+
+			if (!isSignedIn) {
+				setError('Please sign in before payment.')
+				setLoading(false)
+				return
+			}
+
+			if (cart.length === 0) {
+				setError('Your cart is empty.')
+				setLoading(false)
+				return
+			}
+
+			try {
+				const token = await getToken()
+
+				if (!token) {
+					throw new Error('Unable to get your sign-in token.')
+				}
+
+				const nextClientSecret = await fetchClientSecret(token, cart)
+				setClientSecret(nextClientSecret)
+			} catch (error) {
+				setError(
+					error instanceof Error
+						? error.message
+						: 'Failed to load the payment form.',
+				)
+			} finally {
+				setLoading(false)
+			}
+		}
+
+		createCheckoutSession()
+	}, [cart, getToken, hasHydrated, isLoaded, isSignedIn])
 
 	if (!stripePublishableKey) {
-		return <div className=''>Stripe publishable key is missing.</div>
+		return (
+			<div className='rounded-lg border border-red-100 bg-red-50 p-4 text-sm text-red-700'>
+				Stripe publishable key is missing.
+			</div>
+		)
+	}
+
+	if (loading) {
+		return (
+			<div className='flex min-h-64 items-center justify-center rounded-lg border border-gray-100 bg-gray-50 text-sm text-gray-500'>
+				Loading secure payment form...
+			</div>
+		)
+	}
+
+	if (error) {
+		return (
+			<div className='flex flex-col gap-4 rounded-lg border border-red-100 bg-red-50 p-4 text-sm text-red-700'>
+				<p>{error}</p>
+				{!isSignedIn && (
+					<Link
+						href='/sign-in'
+						className='w-max rounded-lg bg-gray-900 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-gray-800'
+					>
+						Sign in
+					</Link>
+				)}
+			</div>
+		)
 	}
 
 	if (!clientSecret) {
-		return <div className=''>Loading...</div>
+		return (
+			<div className='rounded-lg border border-red-100 bg-red-50 p-4 text-sm text-red-700'>
+				Payment form could not be started.
+			</div>
+		)
 	}
+
 	return (
 		<CheckoutElementsProvider
 			stripe={stripe}
