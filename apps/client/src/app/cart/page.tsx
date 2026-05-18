@@ -1,14 +1,13 @@
 'use client'
 
 import { useRouter, useSearchParams } from 'next/navigation'
-import { CartItemsType } from '../../../types'
 import Image from 'next/image'
 import { ArrowRight, Trash2 } from 'lucide-react'
 import ShippingForm from '../../../components/forms/shipping-form'
 import { useState } from 'react'
-import PaymentForm from '../../../components/forms/payment-form'
 import { ShippingFormInputs } from '../../../lib/validation'
 import useCart from '../../../hooks/use-cart'
+import StripePaymentForm from '../../../components/forms/stripe-payment-form'
 
 const steps = [
 	{
@@ -172,8 +171,9 @@ const CartPage = () => {
 					) : activeStep === 2 ? (
 						<ShippingForm setShippingForm={setShippingForm} />
 					) : activeStep === 3 && shippingForm ? (
-						<PaymentForm />
+						<StripePaymentForm shippingForm={shippingForm} />
 					) : (
+						// <PaymentForm />
 						<p className='text-sm text-gray-500'>
 							Please fill in the shipping form to continue
 						</p>

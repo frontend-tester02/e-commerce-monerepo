@@ -14,11 +14,14 @@ const Page = async () => {
 	const dataProduct = await resProduct.json()
 	console.log(dataProduct)
 
-	const resOrder = await fetch('http://localhost:8001/test', {
-		headers: {
-			Authorization: `Bearer ${token}`,
+	const resOrder = await fetch(
+		`${process.env.NEXT_PUBLIC_ORDER_SERVICE_URL}/test`,
+		{
+			headers: {
+				Authorization: `Bearer ${token}`,
+			},
 		},
-	})
+	)
 	const dataOrder = await resOrder.json()
 	console.log(dataOrder)
 

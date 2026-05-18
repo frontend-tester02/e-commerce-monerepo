@@ -2,6 +2,16 @@ import mongoose from 'mongoose'
 
 let isConnected = false
 
+export const isOrderDBConnected = () => isConnected
+
+const getMongoUrlHost = (mongoUrl: string) => {
+	try {
+		return new URL(mongoUrl).host
+	} catch {
+		return 'configured MongoDB host'
+	}
+}
+
 export const connectOrderDB = async () => {
 	if (isConnected) return
 
@@ -14,7 +24,12 @@ export const connectOrderDB = async () => {
 		isConnected = true
 		console.log('Connected to MongoDB')
 	} catch (error) {
-		console.log(error)
+		if (error instanceof Error && 'code' in error && error.code === 'ENOTFOUND') {
+			throw new Error(
+				`Could not resolve MongoDB host "${getMongoUrlHost(process.env.MONGO_URL)}". Check that MONGO_URL uses the current Atlas connection string.`,
+			)
+		}
+
 		throw error
 	}
 }

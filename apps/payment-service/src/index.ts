@@ -1,11 +1,21 @@
 import { serve } from '@hono/node-server'
 import { Hono } from 'hono'
-import { clerkMiddleware, getAuth } from '@hono/clerk-auth'
-import { authMiddleware } from './middleware/auth-middleware.js'
+import { clerkMiddleware } from '@hono/clerk-auth'
+import sessionRoute from './routes/session.route.js'
+import { cors } from 'hono/cors'
 import stripe from './utils/stripe.js'
 
 const app = new Hono()
+const port = Number(process.env.PORT ?? 8002)
 
+app.use(
+	'*',
+	cors({
+		origin: ['http://localhost:3002'],
+		allowHeaders: ['Content-Type', 'Authorization'],
+		allowMethods: ['GET', 'POST', 'OPTIONS'],
+	}),
+)
 app.use('*', clerkMiddleware())
 
 app.get('/', c => {
@@ -15,6 +25,8 @@ app.get('/', c => {
 		timeStamp: Date.now(),
 	})
 })
+
+app.route('/sessions', sessionRoute)
 
 app.post('/create-stripe-product', async c => {
 	const res = await stripe.products.create({
@@ -39,15 +51,26 @@ app.get('/stripe-product-price', async c => {
 
 const start = async () => {
 	try {
-		serve(
+		const server = serve(
 			{
 				fetch: app.fetch,
-				port: 8002,
+				port,
 			},
 			info => {
-				console.log(`Payment service is running on port 8002`)
+				console.log(`Payment service is running on port ${info.port}`)
 			},
 		)
+
+		server.on('error', error => {
+			if ('code' in error && error.code === 'EADDRINUSE') {
+				console.warn(
+					`Payment service is already running on port ${port}. Reusing existing process.`,
+				)
+				process.exit(0)
+			}
+
+			throw error
+		})
 	} catch (error) {
 		console.log(error)
 		process.exit(1)
