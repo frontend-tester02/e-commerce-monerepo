@@ -4,6 +4,7 @@ import { clerkMiddleware } from '@hono/clerk-auth'
 import sessionRoute from './routes/session.route.js'
 import { cors } from 'hono/cors'
 import stripe from './utils/stripe.js'
+import webhookRoute from './routes/webhooks.route.js'
 
 const app = new Hono()
 const port = Number(process.env.PORT ?? 8002)
@@ -27,6 +28,7 @@ app.get('/', c => {
 })
 
 app.route('/sessions', sessionRoute)
+app.route('/webhooks', webhookRoute)
 
 app.post('/create-stripe-product', async c => {
 	const res = await stripe.products.create({
