@@ -3,6 +3,7 @@ import { clerkPlugin, clerkClient, getAuth } from '@clerk/fastify'
 import { authMiddleware } from './middleware/auth-middleware'
 import { connectOrderDB } from '@repo/order-db'
 import { orderRoute } from './routes/order'
+import { consumer, producer } from './utils/kafka'
 
 const fastify = Fastify({ logger: true })
 const port = Number(process.env.PORT ?? 8001)
@@ -29,7 +30,11 @@ fastify.register(orderRoute)
 const start = async () => {
 	try {
 		try {
-			await connectOrderDB()
+			Promise.all([
+				await connectOrderDB(),
+				await producer.connect(),
+				await consumer.connect(),
+			])
 		} catch (error) {
 			fastify.log.warn(error, 'Order database is unavailable')
 		}
