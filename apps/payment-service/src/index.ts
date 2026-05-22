@@ -6,6 +6,7 @@ import { cors } from 'hono/cors'
 import stripe from './utils/stripe.js'
 import webhookRoute from './routes/webhooks.route.js'
 import { consumer, producer } from './utils/kafka.js'
+import { runKafkaSubscriptions } from './utils/subscrioption.js'
 
 const app = new Hono()
 const port = Number(process.env.PORT ?? 8002)
@@ -55,6 +56,7 @@ app.get('/stripe-product-price', async c => {
 const start = async () => {
 	try {
 		Promise.all([await producer.connect(), await consumer.connect()])
+		await runKafkaSubscriptions()
 		const server = serve(
 			{
 				fetch: app.fetch,
