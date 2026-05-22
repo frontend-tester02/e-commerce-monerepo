@@ -1,8 +1,12 @@
 import mongoose from 'mongoose'
 
-let isConnected = false
+let connectionPromise: Promise<typeof mongoose> | null = null
 
-export const isOrderDBConnected = () => isConnected
+type MongooseConnectionError = Error & {
+	code?: string
+}
+
+export const isOrderDBConnected = () => mongoose.connection.readyState === 1
 
 const getMongoUrlHost = (mongoUrl: string) => {
 	try {
@@ -13,20 +17,29 @@ const getMongoUrlHost = (mongoUrl: string) => {
 }
 
 export const connectOrderDB = async () => {
-	if (isConnected) return
+	if (isOrderDBConnected()) return mongoose
+	if (connectionPromise) return connectionPromise
 
-	if (!process.env.MONGO_URL) {
+	const mongoUrl = process.env.MONGO_URL
+
+	if (!mongoUrl) {
 		throw new Error('MONGO_URL is not defined in env file!')
 	}
 
 	try {
-		await mongoose.connect(process.env.MONGO_URL)
-		isConnected = true
+		connectionPromise = mongoose.connect(mongoUrl)
+		await connectionPromise
+		connectionPromise = null
 		console.log('Connected to MongoDB')
+
+		return mongoose
 	} catch (error) {
-		if (error instanceof Error && 'code' in error && error.code === 'ENOTFOUND') {
+		connectionPromise = null
+		const connectionError = error as MongooseConnectionError
+
+		if (connectionError.code === 'ENOTFOUND') {
 			throw new Error(
-				`Could not resolve MongoDB host "${getMongoUrlHost(process.env.MONGO_URL)}". Check that MONGO_URL uses the current Atlas connection string.`,
+				`Could not resolve MongoDB host "${getMongoUrlHost(mongoUrl)}". Check that MONGO_URL uses the current Atlas connection string.`,
 			)
 		}
 

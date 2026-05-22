@@ -4,6 +4,7 @@ import { authMiddleware } from './middleware/auth-middleware'
 import { connectOrderDB } from '@repo/order-db'
 import { orderRoute } from './routes/order'
 import { consumer, producer } from './utils/kafka'
+import { runKafkaSubscriptions } from './utils/subscription'
 
 const fastify = Fastify({ logger: true })
 const port = Number(process.env.PORT ?? 8001)
@@ -35,6 +36,7 @@ const start = async () => {
 				await producer.connect(),
 				await consumer.connect(),
 			])
+			await runKafkaSubscriptions()
 		} catch (error) {
 			fastify.log.warn(error, 'Order database is unavailable')
 		}
