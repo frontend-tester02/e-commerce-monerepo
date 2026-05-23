@@ -1,16 +1,39 @@
 import Link from 'next/link'
 import Categories from './categories'
 import ProductCard from '../cards/product.card'
-import { products } from '../../constants'
 import Filter from './filter'
+import { ProductType } from '../../types'
 
-const ProductList = ({
+const fetchData = async ({
 	category,
+	sort,
+	search,
+	params,
+}: {
+	category?: string
+	sort?: string
+	search?: string
+	params: 'homepage' | 'products'
+}) => {
+	const res = await fetch(
+		`${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/products?${category ? `category=${category}` : ''}${search ? `&search=${search}` : ''}&sort=${sort || 'newest'}${params === 'homepage' ? '&limit=8' : ''}`,
+	)
+	const data: ProductType[] = await res.json()
+	return data
+}
+
+const ProductList = async ({
+	category,
+	sort,
+	search,
 	params,
 }: {
 	category: string
+	sort?: string
+	search?: string
 	params: 'homepage' | 'products'
 }) => {
+	const products = await fetchData({ category, sort, search, params })
 	return (
 		<div className='w-full'>
 			<Categories />

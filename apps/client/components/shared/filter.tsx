@@ -23,8 +23,8 @@ const Filter = () => {
 			>
 				<option value='newest'>Newest</option>
 				<option value='oldest'>Oldest</option>
-				<option value='low-price'>Price: Low to High</option>
-				<option value='high-price'>Price: High to Low</option>
+				<option value='asc'>Price: Low to High</option>
+				<option value='desc'>Price: High to Low</option>
 			</select>
 		</div>
 	)
