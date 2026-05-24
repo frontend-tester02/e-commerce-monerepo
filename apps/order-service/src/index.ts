@@ -1,5 +1,5 @@
-import Fastify from 'fastify'
-import { clerkPlugin, clerkClient, getAuth } from '@clerk/fastify'
+import Fastify, { type FastifyReply, type FastifyRequest } from 'fastify'
+import { clerkPlugin } from '@clerk/fastify'
 import { authMiddleware } from './middleware/auth-middleware'
 import { connectOrderDB } from '@repo/order-db'
 import { orderRoute } from './routes/order'
@@ -11,7 +11,7 @@ const port = Number(process.env.PORT ?? 8001)
 
 fastify.register(clerkPlugin)
 
-fastify.get('/order', async (request, reply) => {
+fastify.get('/order', async (request: FastifyRequest, reply: FastifyReply) => {
 	return reply.status(200).send({
 		status: 'ok',
 		uptime: process.uptime(),
@@ -19,12 +19,16 @@ fastify.get('/order', async (request, reply) => {
 	})
 })
 
-fastify.get('/test', { preHandler: authMiddleware }, (request, reply) => {
-	return reply.send({
-		message: 'Order service is auth',
-		userId: request.userId,
-	})
-})
+fastify.get(
+	'/test',
+	{ preHandler: authMiddleware },
+	(request: FastifyRequest, reply: FastifyReply) => {
+		return reply.send({
+			message: 'Order service is auth',
+			userId: request.userId,
+		})
+	},
+)
 
 fastify.register(orderRoute)
 
