@@ -31,8 +31,6 @@ app.get('/test', authMiddleware, (req, res) => {
 	res.json({ message: 'Product service auth', userId: req.userId })
 })
 
-console.log('DATABASE_URL:', process.env.DATABASE_URL)
-
 app.use('/products', productRouter)
 app.use('/categories', categoryRouter)
 

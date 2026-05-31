@@ -32,7 +32,7 @@ export const createProduct = async (req: Request, res: Response) => {
 		price: product.price,
 	}
 
-	producer.send('product.created', { value: stripeProduct })
+	await producer.send('product.created', { value: stripeProduct })
 	res.status(201).json(product)
 }
 
@@ -55,13 +55,15 @@ export const deleteProduct = async (req: Request, res: Response) => {
 		where: { id: Number(id) },
 	})
 
-	producer.send('product.deleted', { value: Number(id) })
+	await producer.send('product.deleted', { value: Number(id) })
 
 	return res.status(200).json(deleteProduct)
 }
 
 export const getProducts = async (req: Request, res: Response) => {
 	const { sort, category, search, limit } = req.query
+	const categorySlug =
+		typeof category === 'string' && category !== 'all' ? category : undefined
 
 	const orderBy = (() => {
 		switch (sort) {
@@ -83,9 +85,7 @@ export const getProducts = async (req: Request, res: Response) => {
 
 	const products = await prisma.product.findMany({
 		where: {
-			...(category
-				? { category: { slug: category as string } }
-				: {}),
+			...(categorySlug ? { categorySlug } : {}),
 			...(search
 				? {
 						name: {

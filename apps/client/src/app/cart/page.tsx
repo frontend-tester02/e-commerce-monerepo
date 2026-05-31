@@ -4,7 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import Image from 'next/image'
 import { ArrowRight, Trash2 } from 'lucide-react'
 import ShippingForm from '../../../components/forms/shipping-form'
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { ShippingFormInputs } from '../../../lib/validation'
 import useCart from '../../../hooks/use-cart'
 import StripePaymentForm from '../../../components/forms/stripe-payment-form'
@@ -81,7 +81,7 @@ const steps = [
 // 	},
 // ]
 
-const CartPage = () => {
+const CartContent = () => {
 	const searchParams = useSearchParams()
 	const router = useRouter()
 	const [shippingForm, setShippingForm] = useState<ShippingFormInputs>()
@@ -225,6 +225,14 @@ const CartPage = () => {
 				</div>
 			</div>
 		</div>
+	)
+}
+
+const CartPage = () => {
+	return (
+		<Suspense fallback={null}>
+			<CartContent />
+		</Suspense>
 	)
 }
 

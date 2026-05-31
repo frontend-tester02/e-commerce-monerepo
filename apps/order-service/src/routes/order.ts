@@ -4,7 +4,7 @@ import { isOrderDBConnected, Order } from '@repo/order-db'
 
 export const orderRoute = async (fastify: FastifyInstance) => {
 	fastify.get(
-		'/user-order',
+		'/user-orders',
 		{ preHandler: authMiddleware },
 		async (request, reply) => {
 			if (!isOrderDBConnected()) {
