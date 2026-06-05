@@ -17,10 +17,10 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from '../../../components/ui/table'
+} from '../../../../components/ui/table'
 import { useState } from 'react'
 import { Trash2 } from 'lucide-react'
-import { DataTablePagination } from '../../../components/shared/table-pagination'
+import { DataTablePagination } from '../../../../components/shared/table-pagination'
 
 interface DataTableProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[]
@@ -61,8 +61,8 @@ export function DataTable<TData, TValue>({
 											? null
 											: flexRender(
 													header.column.columnDef.header,
-													header.getContext()
-											  )}
+													header.getContext(),
+												)}
 									</TableHead>
 								)
 							})}

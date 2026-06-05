@@ -17,8 +17,8 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from '../../../components/ui/table'
-import { DataTablePagination } from '../../../components/shared/table-pagination'
+} from '../../../../components/ui/table'
+import { DataTablePagination } from '../../../../components/shared/table-pagination'
 import { useState } from 'react'
 import { Trash2 } from 'lucide-react'
 
@@ -62,8 +62,8 @@ export function DataTable<TData, TValue>({
 											? null
 											: flexRender(
 													header.column.columnDef.header,
-													header.getContext()
-											  )}
+													header.getContext(),
+												)}
 									</TableHead>
 								)
 							})}

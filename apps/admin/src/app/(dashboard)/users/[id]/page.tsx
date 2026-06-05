@@ -1,4 +1,4 @@
-import { Badge } from '../../../../components/ui/badge'
+import { Badge } from '../../../../../components/ui/badge'
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -6,24 +6,24 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from '../../../../components/ui/breadcrumb'
+} from '../../../../../components/ui/breadcrumb'
 import {
 	HoverCard,
 	HoverCardContent,
 	HoverCardTrigger,
-} from '../../../../components/ui/hover-card'
-import { Progress } from '../../../../components/ui/progress'
+} from '../../../../../components/ui/hover-card'
+import { Progress } from '../../../../../components/ui/progress'
 import { BadgeCheck, Candy, Citrus, Shield } from 'lucide-react'
-import { Sheet, SheetTrigger } from '../../../../components/ui/sheet'
-import { Button } from '../../../../components/ui/button'
-import EditUser from '../../../../components/shared/edit-user'
+import { Sheet, SheetTrigger } from '../../../../../components/ui/sheet'
+import { Button } from '../../../../../components/ui/button'
+import EditUser from '../../../../../components/shared/edit-user'
 import {
 	Avatar,
 	AvatarFallback,
 	AvatarImage,
-} from '../../../../components/ui/avatar'
-import CardList from '../../../../components/shared/card-list'
-import AppLineChart from '../../../../components/shared/line-chart'
+} from '../../../../../components/ui/avatar'
+import CardList from '../../../../../components/shared/card-list'
+import AppLineChart from '../../../../../components/shared/line-chart'
 
 const SingleUserPage = () => {
 	return (

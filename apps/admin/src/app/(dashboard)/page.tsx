@@ -1,8 +1,8 @@
-import AppAreaChart from '../../components/shared/area-chart'
-import AppBarChart from '../../components/shared/bar-chart'
-import CardList from '../../components/shared/card-list'
-import AppPieChart from '../../components/shared/pie-chart'
-import TodoList from '../../components/shared/todo-list'
+import AppAreaChart from '../../../components/shared/area-chart'
+import AppBarChart from '../../../components/shared/bar-chart'
+import CardList from '../../../components/shared/card-list'
+import AppPieChart from '../../../components/shared/pie-chart'
+import TodoList from '../../../components/shared/todo-list'
 
 const Homepage = () => {
 	return (
