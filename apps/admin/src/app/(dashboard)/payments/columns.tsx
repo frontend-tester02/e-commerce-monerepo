@@ -14,17 +14,9 @@ import {
 import { cn } from '../../../../lib/utils'
 import { ColumnDef } from '@tanstack/react-table'
 import { ArrowUpDown, MoreHorizontal } from 'lucide-react'
+import type { OrderType } from '@repo/types'
 
-export type Payment = {
-	id: string
-	amount: number
-	fullName: string
-	userId: string
-	email: string
-	status: 'pending' | 'processing' | 'success' | 'failed'
-}
-
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<OrderType>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (
@@ -44,8 +36,8 @@ export const columns: ColumnDef<Payment>[] = [
 		),
 	},
 	{
-		accessorKey: 'fullName',
-		header: 'User',
+		accessorKey: '_id',
+		header: 'ID',
 	},
 	{
 		accessorKey: 'email',
@@ -110,7 +102,7 @@ export const columns: ColumnDef<Payment>[] = [
 					<DropdownMenuContent align='end'>
 						<DropdownMenuLabel>Actions</DropdownMenuLabel>
 						<DropdownMenuItem
-							onClick={() => navigator.clipboard.writeText(payment.id)}
+							onClick={() => navigator.clipboard.writeText(payment._id)}
 						>
 							Copy payment ID
 						</DropdownMenuItem>

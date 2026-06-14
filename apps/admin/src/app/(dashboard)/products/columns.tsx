@@ -15,19 +15,20 @@ import Image from 'next/image'
 import Link from 'next/link'
 import { Checkbox } from '../../../../components/ui/checkbox'
 import { Button } from '../../../../components/ui/button'
+import { ProductType } from '@repo/types'
 
-export type Product = {
-	id: string | number
-	price: number
-	name: string
-	shortDescription: string
-	description: string
-	sizes: string[]
-	colors: string[]
-	images: Record<string, string>
-}
+// export type Product = {
+// 	id: string | number
+// 	price: number
+// 	name: string
+// 	shortDescription: string
+// 	description: string
+// 	sizes: string[]
+// 	colors: string[]
+// 	images: Record<string, string>
+// }
 
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<ProductType>[] = [
 	{
 		id: 'select',
 		header: ({ table }) => (

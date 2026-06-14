@@ -15,14 +15,15 @@ import Link from 'next/link'
 import { Checkbox } from '../../../../components/ui/checkbox'
 import { Button } from '../../../../components/ui/button'
 import { cn } from '../../../../lib/utils'
+import { User } from '@clerk/nextjs/server'
 
-export type User = {
-	id: string
-	avatar: string
-	fullName: string
-	email: string
-	status: 'active' | 'inactive'
-}
+// export type User = {
+// 	id: string
+// 	avatar: string
+// 	fullName: string
+// 	email: string
+// 	status: 'active' | 'inactive'
+// }
 
 export const columns: ColumnDef<User>[] = [
 	{
@@ -51,8 +52,8 @@ export const columns: ColumnDef<User>[] = [
 			return (
 				<div className='w-9 h-9 relative'>
 					<Image
-						src={user.avatar}
-						alt={user.fullName}
+						src={user.imageUrl}
+						alt={user.firstName || user.lastName || 'User'}
 						fill
 						className='rounded-full object-cover'
 					/>
@@ -61,8 +62,16 @@ export const columns: ColumnDef<User>[] = [
 		},
 	},
 	{
-		accessorKey: 'fullName',
+		accessorKey: 'firstName',
 		header: 'User',
+		cell: ({ row }) => {
+			const user = row.original
+			return (
+				<div className='flex items-center gap-2'>
+					<span className='text-sm font-medium'>{user.firstName} {user.lastName}</span>
+				</div>
+			)
+		}
 	},
 	{
 		accessorKey: 'email',
@@ -77,19 +86,28 @@ export const columns: ColumnDef<User>[] = [
 				</Button>
 			)
 		},
+		cell: ({ row }) => {
+			const user = row.original
+			return (
+				<div className='flex items-center gap-2'>
+					<span className='text-sm font-medium'>{user.emailAddresses[0]?.emailAddress}</span>
+				</div>
+			)
+		}
 	},
 	{
 		accessorKey: 'status',
 		header: 'Status',
 		cell: ({ row }) => {
-			const status = row.getValue('status')
+			const user = row.original
+			const status = user.banned ? 'banned' : 'active'
 
 			return (
 				<div
 					className={cn(
 						`p-1 rounded-md w-max text-xs`,
 						status === 'active' && 'bg-green-500/40',
-						status === 'inactive' && 'bg-red-500/40',
+						status === 'banned' && 'bg-red-500/40',
 					)}
 				>
 					{status as string}

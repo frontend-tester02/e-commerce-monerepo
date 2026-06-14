@@ -1,9 +1,18 @@
-// import type { Product, Category } from '@repo/product-db'
+// import type { Category } from '@repo/product-db'
 // import z from 'zod'
 
-// export type ProductType = Product
+export type ProductType = {
+	id: string | number
+	name: string
+	shortDescription: string
+	description: string
+	price: number
+	sizes: string[]
+	colors: string[]
+	images: Record<string, string>
+}
 
-// export type ProductsType = ProductType[]
+export type ProductsType = ProductType[]
 
 // export type StripeProductType = {
 // 	id: string
